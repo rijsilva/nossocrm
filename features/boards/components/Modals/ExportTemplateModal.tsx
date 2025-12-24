@@ -19,10 +19,22 @@ function downloadJson(filename: string, data: unknown) {
   const a = document.createElement('a');
   a.href = url;
   a.download = filename;
+  a.style.display = 'none';
   document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
+
+  // Note: some browsers (notably Safari) may cancel the download if the object URL
+  // is revoked immediately after click. Keep it alive briefly.
+  try {
+    a.click();
+  } catch {
+    // Fallback: open the blob URL (user can save manually).
+    window.open(url, '_blank', 'noopener,noreferrer');
+  } finally {
+    a.remove();
+    window.setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 2000);
+  }
 }
 
 function buildJourneyFromBoards(
