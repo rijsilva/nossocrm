@@ -5,10 +5,16 @@ import type { Board, JourneyDefinition, RegistryTemplate } from '@/types';
 import { useToast } from '@/context/ToastContext';
 
 function slugify(input: string) {
-  return (input ?? '')
+  // NOTE: avoid Unicode property escapes (\p{L}) for broader browser compatibility (Safari).
+  // Normalize accents → ASCII-ish, then keep [a-z0-9-].
+  const ascii = (input ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+
+  return ascii
     .trim()
     .toLowerCase()
-    .replace(/[^\p{L}\p{N}]+/gu, '-') // keep letters/numbers (unicode), replace rest with '-'
+    .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .replace(/-{2,}/g, '-');
 }
@@ -181,14 +187,19 @@ export function ExportTemplateModal(props: {
   };
 
   const handleDownloadJourney = () => {
-    if (!canExportJourney) {
-      addToast('Selecione ao menos 1 board para exportar a jornada.', 'error');
-      return;
+    try {
+      if (!canExportJourney) {
+        addToast('Selecione ao menos 1 board para exportar a jornada.', 'error');
+        return;
+      }
+      const base = slugify(mode === 'board' ? activeBoard.name : (journeyName || 'journey'));
+      const filename = `${base || 'journey'}.journey.json`;
+      downloadJson(filename, journeyJson);
+      addToast('Download iniciado.', 'success');
+    } catch (err) {
+      console.error('[ExportTemplateModal] download failed:', err);
+      addToast('Falha ao iniciar download. Veja o console para detalhes.', 'error');
     }
-    const base = slugify(mode === 'board' ? activeBoard.name : (journeyName || 'journey'));
-    const filename = `${base || 'journey'}.journey.json`;
-    downloadJson(filename, journeyJson);
-    addToast('Download iniciado.', 'success');
   };
 
   return (
