@@ -328,11 +328,17 @@ export const DealDetailModal: React.FC<DealDetailModalProps> = ({ dealId, isOpen
   return (
     <FocusTrap active={isOpen} onEscape={onClose}>
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4"
+        // Backdrop + positioning wrapper. Clicking outside the panel should close the modal.
+        // Use a high z-index so it never renders behind fixed sidebars/overlays.
+        className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4"
         role="dialog"
         aria-modal="true"
         aria-labelledby={headingId}
         onKeyDown={handleKeyDown}
+        onClick={(e) => {
+          // Only close when clicking the backdrop, not when clicking inside the panel.
+          if (e.target === e.currentTarget) onClose();
+        }}
       >
         <div className="bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl w-full max-w-4xl h-[85vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
           {/* HEADER (Stage Bar + Won/Lost) */}
