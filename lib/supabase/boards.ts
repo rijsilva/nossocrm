@@ -75,6 +75,8 @@ export interface DbBoard {
   won_stage_id: string | null;
   /** ID do estágio de Perda (Lost). */
   lost_stage_id: string | null;
+  /** Produto padrão para deals desse board (opcional). */
+  default_product_id?: string | null;
   /** Se deve manter no estágio ao ganhar (true) ou mover (false/null). */
   won_stay_in_stage: boolean | null;
   /** Se deve manter no estágio ao perder (true) ou mover (false/null). */
@@ -184,6 +186,7 @@ const transformBoard = (db: DbBoard, stages: DbBoardStage[]): Board => {
     lostStageId: db.lost_stage_id || undefined,
     wonStayInStage: db.won_stay_in_stage || false,
     lostStayInStage: db.lost_stay_in_stage || false,
+    defaultProductId: (db as any).default_product_id || undefined,
     goal,
     agentPersona,
     entryTrigger: db.entry_trigger || undefined,
@@ -212,6 +215,7 @@ const transformToDb = (board: Omit<Board, 'id' | 'createdAt'>, order?: number): 
   next_board_id: sanitizeUUID(board.nextBoardId),
   won_stage_id: sanitizeUUID(board.wonStageId),
   lost_stage_id: sanitizeUUID(board.lostStageId),
+  default_product_id: sanitizeUUID(board.defaultProductId),
   won_stay_in_stage: board.wonStayInStage || false,
   lost_stay_in_stage: board.lostStayInStage || false,
   goal_description: board.goal?.description || null,

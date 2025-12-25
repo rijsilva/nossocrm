@@ -317,6 +317,8 @@ export interface Board {
   lostStageId?: string; // Estágio de Perda
   wonStayInStage?: boolean; // Se true, "Arquiva" na etapa atual (status Won) em vez de mover
   lostStayInStage?: boolean; // Se true, "Arquiva" na etapa atual (status Lost) em vez de mover
+  /** Produto padrão sugerido para deals desse board (opcional). */
+  defaultProductId?: string;
   stages: BoardStage[];
   isDefault?: boolean;
   template?: 'PRE_SALES' | 'SALES' | 'ONBOARDING' | 'CS' | 'CUSTOM'; // Template usado para criar este board

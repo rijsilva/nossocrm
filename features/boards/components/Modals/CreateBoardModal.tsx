@@ -91,7 +91,7 @@ export const CreateBoardModal: React.FC<CreateBoardModalProps> = ({
 }) => {
   const headingId = useId();
 
-  const { lifecycleStages } = useCRM();
+  const { lifecycleStages, products } = useCRM();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [nextBoardId, setNextBoardId] = useState<string>('');
@@ -100,6 +100,7 @@ export const CreateBoardModal: React.FC<CreateBoardModalProps> = ({
   const [lostStageId, setLostStageId] = useState<string>('');
   const [wonStayInStage, setWonStayInStage] = useState(false);
   const [lostStayInStage, setLostStayInStage] = useState(false);
+  const [defaultProductId, setDefaultProductId] = useState<string>('');
   const [selectedTemplate, setSelectedTemplate] = useState<BoardTemplateType | ''>('');
   const [stages, setStages] = useState<BoardStage[]>([]);
   const [isLifecycleModalOpen, setIsLifecycleModalOpen] = useState(false);
@@ -117,6 +118,7 @@ export const CreateBoardModal: React.FC<CreateBoardModalProps> = ({
         setLostStageId(editingBoard.lostStageId || '');
         setWonStayInStage(editingBoard.wonStayInStage || false);
         setLostStayInStage(editingBoard.lostStayInStage || false);
+        setDefaultProductId(editingBoard.defaultProductId || '');
         setSelectedTemplate(editingBoard.template || '');
         setStages(editingBoard.stages);
       } else {
@@ -129,6 +131,7 @@ export const CreateBoardModal: React.FC<CreateBoardModalProps> = ({
         setLostStageId('');
         setWonStayInStage(false);
         setLostStayInStage(false);
+        setDefaultProductId('');
         setSelectedTemplate('');
         setStages([
           { id: crypto.randomUUID(), label: 'Nova', color: 'bg-blue-500' },
@@ -218,6 +221,7 @@ export const CreateBoardModal: React.FC<CreateBoardModalProps> = ({
       lostStageId: (lostStageId || null) as any,
       wonStayInStage,
       lostStayInStage,
+      defaultProductId: (defaultProductId || null) as any,
       template: selectedTemplate || 'CUSTOM',
       stages,
       isDefault: false
@@ -351,6 +355,30 @@ export const CreateBoardModal: React.FC<CreateBoardModalProps> = ({
                 </select>
                 <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
                   Novos negócios de contatos neste estágio aparecerão automaticamente aqui.
+                </p>
+              </div>
+
+              {/* Default Product */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  🧾 Produto padrão (opcional)
+                </label>
+                <select
+                  value={defaultProductId}
+                  onChange={(e) => setDefaultProductId(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                >
+                  <option value="">Nenhum</option>
+                  {products
+                    .filter(p => p.active !== false)
+                    .map(p => (
+                      <option key={p.id} value={p.id}>
+                        {p.name} — R$ {Number(p.price ?? 0).toLocaleString('pt-BR')}
+                      </option>
+                    ))}
+                </select>
+                <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                  Sugere (ou pré-seleciona) um produto ao adicionar itens em deals desse board.
                 </p>
               </div>
 

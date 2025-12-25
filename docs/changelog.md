@@ -2,6 +2,20 @@
 
 ## 25/12/2025
 
+- **Settings (IA)**:
+  - UI de configuração de IA mais compacta (redução de paddings/margens para não “inflar” a tela).
+  - Bloco de **Consentimento LGPD** agora inicia **colapsado quando já existe API key** salva e **colapsa automaticamente após salvar** uma key válida.
+
+- **Central de I.A (Configurações)**:
+  - Nova aba/rota `/settings/ai` para concentrar tudo relacionado a IA (configuração + prompts).
+  - Ajustados links internos para apontar para `/settings/ai#ai-config`.
+- **CRUD inicial de Prompts (por organização)**:
+  - Migration `supabase/migrations/20251225000000_ai_prompts.sql` cria `ai_prompt_templates` com versionamento simples (1 ativo por `key`).
+  - APIs `app/api/settings/ai-prompts` (listar overrides ativos + salvar nova versão) e `app/api/settings/ai-prompts/[key]` (listar versões + reset).
+  - UI `features/settings/components/AIPromptsManager.tsx` para editar override e resetar.
+- **Integração backend com prompts editáveis**:
+  - Rotas `app/api/ai/tasks/*` e parte de `app/api/ai/actions` passaram a resolver prompt via catálogo + override (`lib/ai/prompts/*`), permitindo mudar comportamento sem deploy.
+
 - **Jornada “Máquina de Vendas B2B (Completa)”**:
   - Adicionado o estágio/board **CS & Upsell** (4ª etapa), fechando o ciclo pós-onboarding dentro da jornada oficial.
   - Instalação da jornada oficial agora preenche `linkedLifecycleStage` **no nível do board** (além do `linkedLifecycleStage` já existente nas colunas/estágios), deixando os boards “interligados” pelo lifecycle no runtime.
@@ -41,6 +55,7 @@
   - UX (Deals): removidos temporariamente os ícones do composer de nota (modelo/ditado) até definirmos a UX final.
   - Feature (Produtos): adicionado catálogo em **Configurações → Produtos/Serviços** (CRUD básico) e suporte a **item personalizado** no deal (quando o produto depende do cliente).
   - Feature (Produtos): catálogo agora permite **editar** produto (nome, preço, SKU, descrição).
+  - Feature (Boards): suporte a **produto padrão por board** (configurável no “Editar Board” e sugerido no modal do deal).
 
 ## 24/12/2025
 

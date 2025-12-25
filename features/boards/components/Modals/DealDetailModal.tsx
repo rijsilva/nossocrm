@@ -136,6 +136,20 @@ export const DealDetailModal: React.FC<DealDetailModalProps> = ({ dealId, isOpen
     }
   }, [isOpen, dealId]); // Depend on dealId to reset when switching deals
 
+  // UX: preselect board's default product when opening the Products tab (non-invasive).
+  useEffect(() => {
+    if (!isOpen) return;
+    if (activeTab !== 'products') return;
+    const defaultId = dealBoard?.defaultProductId;
+    if (!defaultId) return;
+    if (selectedProductId) return;
+    // Only suggest if product exists & is active.
+    const p = productsById.get(defaultId);
+    if (!p || p.active === false) return;
+    setSelectedProductId(defaultId);
+    setProductQuantity(1);
+  }, [activeTab, dealBoard?.defaultProductId, isOpen, productsById, selectedProductId]);
+
   // Pre-compute stage label once for tool prompts (avoid repeated stage lookup).
   const stageLabel = useMemo(() => {
     if (!dealBoard) return undefined;
