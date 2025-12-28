@@ -1,5 +1,13 @@
 # Changelog
 
+## 28/12/2025
+
+- **Mobile shell (tablet/mobile) — groundwork**:
+  - Adicionados utilitários de breakpoint para modo responsivo (`mobile|tablet|desktop`) em `lib/utils/responsive.ts` e hook `hooks/useResponsiveMode.ts`.
+  - Criada a base de **Sheets** para fluxos mobile-first: `components/ui/Sheet.tsx` e `components/ui/FullscreenSheet.tsx` (com focus trap + ESC + safe-area bottom).
+  - Criada configuração de navegação para **BottomNav** e “Mais” (`components/navigation/navConfig.ts`), espelhando destinos secundários do sidebar.
+  - Implementada navegação **BottomNav (mobile)** + sheet “Mais” (ActionSheet) e integrada ao app shell em `components/Layout.tsx`, com padding automático via CSS vars (`--app-bottom-nav-height` / `--app-safe-area-bottom`) para evitar conteúdo coberto.
+
 ## 27/12/2025
 
 - **Docs (Segurança/RBAC)**:
@@ -70,8 +78,6 @@
     - UX (Supabase Free — preflight Apple): com PAT + orgs carregadas, o wizard faz um preflight e **bloqueia “Criar projeto” antes de falhar**, mostrando diretamente o fluxo “Liberar 1 slot” quando o limite do Free já está atingido.
     - Fix (Supabase seleção de projeto): ao escolher um projeto de uma organização, o wizard agora usa a lista **da própria org** (e fallback por `ref`) para preencher `supabaseUrl/projectRef`, evitando o caso de “lista aparece, mas não seleciona”.
     - UX (Supabase projetos visíveis): a seleção de projetos da org agora é feita via **cards** (abrir/usar) em vez de `<select>`, evitando casos de “lista veio, mas não aparece”.
-    - UX (Apple A/B): introduzidos componentes **A** `PairingCard` (palco principal) e **B** `ActionSheet` (bottom sheet) e aplicado no passo Supabase: 1 CTA “Escolher projeto” abre o sheet com seleção de **org → projeto** (estilo pareamento).
-    - UI (cinema): adicionado `components/ui/spatial-product-showcase.tsx` (inspirado no `21st.dev`) e usado como **palco full-screen** no `/install/wizard` por trás do formulário, com máscara/vignette para manter legibilidade. O palco agora tem **4 cenas** (Autorização/Destino/Sincronização/Primeiro contato) e troca automaticamente conforme `currentStep` e `supabaseUiStep`.
     - UX (zero fricção): ao colar um PAT válido, o Supabase step tenta listar orgs automaticamente e **auto-avança** para “Destino” quando a verificação passa; se houver apenas 1 org, ela é selecionada automaticamente e o sistema já carrega os projetos.
 
 - **Build (fix)**:

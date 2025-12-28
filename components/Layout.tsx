@@ -51,6 +51,8 @@ import { useTheme } from '../context/ThemeContext';
 import { prefetchRoute, RouteName } from '@/lib/prefetch';
 import { isDebugMode, enableDebugMode, disableDebugMode } from '@/lib/debug';
 import { SkipLink } from '@/lib/a11y';
+import { useResponsiveMode } from '@/hooks/useResponsiveMode';
+import { BottomNav, MoreMenuSheet, NavigationRail } from '@/components/navigation';
 
 // Lazy load AI Assistant (deprecated - using UIChat now)
 // const AIAssistant = lazy(() => import('./AIAssistant'));
@@ -135,7 +137,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { isGlobalAIOpen, setIsGlobalAIOpen, sidebarCollapsed, setSidebarCollapsed } = useCRM();
   const { profile, signOut } = useAuth();
   const pathname = usePathname();
+  const { mode } = useResponsiveMode();
+  const isMobile = mode === 'mobile';
+  const isTablet = mode === 'tablet';
+  const isDesktop = mode === 'desktop';
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
   // Hydration safety: `isDebugMode()` reads localStorage. On SSR it is always false.
   // Initialize deterministically and sync on mount to avoid hydration mismatch warnings.
   const [debugEnabled, setDebugEnabled] = useState(false);
@@ -148,8 +155,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   // instead of covering the navigation sidebar (works even for portals).
   useEffect(() => {
     if (typeof document === 'undefined') return;
-    document.documentElement.style.setProperty('--app-sidebar-width', sidebarCollapsed ? '5rem' : '16rem');
-  }, [sidebarCollapsed]);
+    const width =
+      isDesktop ? (sidebarCollapsed ? '5rem' : '16rem')
+        : isTablet ? '5rem'
+          : '0px';
+    document.documentElement.style.setProperty('--app-sidebar-width', width);
+  }, [isDesktop, isTablet, sidebarCollapsed]);
 
   // Cleanup on unmount (e.g. leaving the app shell).
   useEffect(() => {
@@ -158,6 +169,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       document.documentElement.style.setProperty('--app-sidebar-width', '0px');
     };
   }, []);
+
+  // Expose bottom nav height so the content can pad itself and avoid being covered.
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    document.documentElement.style.setProperty('--app-bottom-nav-height', isMobile ? '56px' : '0px');
+  }, [isMobile]);
+
+  // Close "More" menu when route changes.
+  useEffect(() => {
+    setIsMoreOpen(false);
+  }, [pathname]);
 
   // Track the last clicked menu item to maintain highlight during Suspense transitions
   const [clickedPath, setClickedPath] = useState<string | undefined>(undefined);
@@ -195,7 +217,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* Skip Link for keyboard users */}
       <SkipLink targetId="main-content" />
 
+      {/* Tablet rail */}
+      {isTablet ? <NavigationRail onOpenMore={() => setIsMoreOpen(true)} /> : null}
+
       {/* Sidebar - Collapsible */}
+      {isDesktop ? (
       <aside
         className={`hidden md:flex flex-col z-20 glass border-r border-[var(--color-border-subtle)] transition-all duration-300 ease-in-out ${sidebarCollapsed ? 'w-20 items-center' : 'w-64'
           }`}
@@ -370,6 +396,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
         </div>
       </aside>
+      ) : null}
 
       {/* Main Content Wrapper */}
       <div className="flex-1 flex min-w-0 overflow-hidden relative">
@@ -419,7 +446,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
           <main
             id="main-content"
-            className="flex-1 overflow-auto p-6 relative scroll-smooth"
+            className="flex-1 overflow-auto p-6 pb-[calc(1.5rem+var(--app-bottom-nav-height,0px)+var(--app-safe-area-bottom,0px))] relative scroll-smooth"
             tabIndex={-1}
           >
             {children}
@@ -439,6 +466,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
         </aside>
       </div>
+
+      {/* Mobile app shell */}
+      <BottomNav onOpenMore={() => setIsMoreOpen(true)} />
+      <MoreMenuSheet isOpen={isMoreOpen} onClose={() => setIsMoreOpen(false)} />
     </div>
   );
 };

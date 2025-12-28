@@ -72,7 +72,7 @@ export const ActivityFormModal: React.FC<ActivityFormModalProps> = ({
       }}
     >
       <div
-        className="bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl w-full max-w-md animate-in zoom-in-95 duration-200"
+        className="bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl w-full max-w-md animate-in zoom-in-95 duration-200 max-h-[calc(100dvh-2rem)] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-5 border-b border-slate-200 dark:border-white/10 flex justify-between items-center">
@@ -86,7 +86,7 @@ export const ActivityFormModal: React.FC<ActivityFormModalProps> = ({
             <X size={20} />
           </button>
         </div>
-        <form onSubmit={onSubmit} className="p-5 space-y-4">
+        <form onSubmit={onSubmit} className="p-5 space-y-4 overflow-auto pb-[calc(1.25rem+var(--app-safe-area-bottom,0px))]">
           <div>
             <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Título</label>
             <input

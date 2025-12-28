@@ -12,6 +12,7 @@ import { LossReasonModal } from '@/components/ui/LossReasonModal';
 import { DealView, CustomFieldDefinition, Board, BoardStage } from '@/types';
 import { ExportTemplateModal } from './Modals/ExportTemplateModal';
 import { useAuth } from '@/context/AuthContext';
+import PageLoader from '@/components/PageLoader';
 
 interface PipelineViewProps {
   // Boards
@@ -252,7 +253,9 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-full text-slate-500">Carregando...</div>
+      <div className="h-full">
+        <PageLoader />
+      </div>
     );
   }
 
@@ -325,6 +328,7 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
                 openActivityMenuId={openActivityMenuId}
                 setOpenActivityMenuId={setOpenActivityMenuId}
                 handleQuickAddActivity={handleQuickAddActivity}
+                onMoveDealToStage={handleMoveDealToStage}
               />
             )}
           </div>

@@ -8,7 +8,8 @@ export type ResponsiveMode = 'mobile' | 'tablet' | 'desktop';
  */
 export const APP_BREAKPOINTS = {
   md: 768,
-  lg: 1024,
+  // Desktop is treated as >= 1280px so iPad landscape (1024px) stays in tablet mode.
+  lg: 1280,
 } as const;
 
 export function getResponsiveMode(width: number): ResponsiveMode {

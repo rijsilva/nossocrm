@@ -5,6 +5,15 @@
 **Status**: Draft  
 **Input**: User description: "Transformar o NossoCRM web em experiência mobile/tablet comparável a app, sem app nativo: BottomNav no mobile, Navigation Rail no tablet, flows core em Sheets/Fullscreen Sheets, Boards mobile-first (list por estágio), e PWA instalável com prompt automático."
 
+## Clarifications
+
+### Session 2025-12-28
+
+- Q: Conteúdo do item “Mais” (mobile) → A: Espelho completo da sidebar (todas as rotas não-primárias)
+- Q: “Mais” abre como o quê? → A: Um menu/sheet (lista de itens)
+- Q: Regra de “dismiss” do banner de instalação (iOS/onde não há prompt nativo) → A: Voltar a mostrar após 7 dias
+- Q: Tablet (iPad) — Deal detail abre como? → A: Modal/painel (sem split view nesta entrega)
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Navegar e operar no mobile com “app shell” (Priority: P1)
@@ -81,9 +90,13 @@ Como usuário no tablet, eu quero uma navegação lateral compacta (rail) para a
 - **FR-001**: O sistema MUST fornecer navegação principal consistente no mobile para Inbox, Boards, Contatos e Atividades.
 - **FR-002**: O sistema MUST garantir que conteúdos e CTAs não sejam cobertos por navegação/overlays em viewports mobile.
 - **FR-003**: O sistema MUST permitir executar ações essenciais do deal no mobile (abrir detalhe, mover estágio, marcar ganho/perdido).
+- **FR-003a**: Em tablet, o detalhe do deal MUST abrir como modal/painel (não split view) nesta entrega.
 - **FR-004**: O sistema MUST permitir criar e concluir atividades no mobile sem quebra de layout.
 - **FR-005**: O sistema MUST oferecer uma experiência de detalhes/edição em “sheet” no mobile para fluxos longos.
 - **FR-006**: O sistema MUST oferecer suporte à instalação como PWA e exibir prompt automático quando elegível.
+- **FR-006a**: O sistema MUST fornecer um item “Mais” no mobile que espelha a navegação completa da sidebar (todas as rotas não-primárias).
+- **FR-006b**: O item “Mais” no mobile MUST abrir um menu/sheet com a lista de destinos não-primários (espelho da sidebar).
+- **FR-006c**: Quando o banner de instalação do PWA for fechado, o sistema MUST respeitar um cooldown de 7 dias antes de exibir novamente no mesmo dispositivo.
 - **FR-007**: O sistema MUST manter isolamento por organização e respeitar permissões do usuário em todas as telas.
 - **FR-008**: O sistema MUST apresentar mensagens de erro/sem conexão de forma compreensível em caso de falhas de rede.
 - **FR-009**: O sistema MUST funcionar em tablet com navigation rail para as áreas principais.

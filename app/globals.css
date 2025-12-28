@@ -108,6 +108,11 @@ svg.lucide {
   --chart-tooltip-text: #f8fafc;
 }
 
+/* Avoid accidental horizontal scroll on small screens (mobile/tablet). */
+html, body {
+  overflow-x: hidden;
+}
+
 .dark {
   /* Dark Mode - Deep Slate (OKLCH) */
   --color-bg: oklch(11% 0.025 260);

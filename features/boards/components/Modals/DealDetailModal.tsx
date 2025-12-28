@@ -8,6 +8,8 @@ import { useMoveDealSimple } from '@/lib/query/hooks';
 import { FocusTrap, useFocusReturn } from '@/lib/a11y';
 import { Activity } from '@/types';
 import { usePersistedState } from '@/hooks/usePersistedState';
+import { useResponsiveMode } from '@/hooks/useResponsiveMode';
+import { DealSheet } from '../DealSheet';
 import {
   analyzeLead,
   generateEmailDraft,
@@ -373,23 +375,17 @@ export const DealDetailModal: React.FC<DealDetailModalProps> = ({ dealId, isOpen
     }
   };
 
-  return (
-    <FocusTrap active={isOpen} onEscape={onClose}>
-      <div
-        // Backdrop + positioning wrapper. Clicking outside the panel should close the modal.
-        // No desktop, este modal não deve cobrir a sidebar de navegação.
-        // Em md+ deslocamos o overlay pela largura da sidebar via `--app-sidebar-width`.
-        className="fixed inset-0 md:left-[var(--app-sidebar-width,0px)] z-[9999] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={headingId}
-        onKeyDown={handleKeyDown}
-        onClick={(e) => {
-          // Only close when clicking the backdrop, not when clicking inside the panel.
-          if (e.target === e.currentTarget) onClose();
-        }}
-      >
-        <div className="bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl w-full max-w-4xl h-[85vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+  const { mode } = useResponsiveMode();
+  const isMobile = mode === 'mobile';
+
+  const inner = (
+    <div
+      className={
+        isMobile
+          ? 'bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 w-full h-[100dvh] flex flex-col overflow-hidden pb-[var(--app-safe-area-bottom,0px)]'
+          : 'bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl w-full max-w-4xl h-[85vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200'
+      }
+    >
           {/* HEADER (Stage Bar + Won/Lost) */}
           <div className="bg-slate-50 dark:bg-black/20 border-b border-slate-200 dark:border-white/10 p-6 shrink-0">
             <div className="flex justify-between items-start mb-6">
@@ -1211,6 +1207,34 @@ export const DealDetailModal: React.FC<DealDetailModalProps> = ({ dealId, isOpen
           }}
           dealTitle={deal.title}
         />
+    </div>
+  );
+
+  if (isMobile) {
+    return (
+      <DealSheet isOpen={isOpen} onClose={onClose} ariaLabel={`Negócio: ${deal.title}`}>
+        <div onKeyDown={handleKeyDown}>{inner}</div>
+      </DealSheet>
+    );
+  }
+
+  return (
+    <FocusTrap active={isOpen} onEscape={onClose}>
+      <div
+        // Backdrop + positioning wrapper. Clicking outside the panel should close the modal.
+        // No desktop, este modal não deve cobrir a sidebar de navegação.
+        // Em md+ deslocamos o overlay pela largura da sidebar via `--app-sidebar-width`.
+        className="fixed inset-0 md:left-[var(--app-sidebar-width,0px)] z-[9999] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={headingId}
+        onKeyDown={handleKeyDown}
+        onClick={(e) => {
+          // Only close when clicking the backdrop, not when clicking inside the panel.
+          if (e.target === e.currentTarget) onClose();
+        }}
+      >
+        {inner}
       </div>
     </FocusTrap>
   );
