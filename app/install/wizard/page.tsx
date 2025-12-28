@@ -170,7 +170,7 @@ export default function InstallWizardPage() {
     animate: { opacity: 1, y: 0, filter: 'blur(0px)' },
     exit: { opacity: 0, y: -10, filter: 'blur(6px)' },
   };
-  const sceneTransition = { type: 'tween', ease: [0.22, 1, 0.36, 1], duration: 0.4 };
+  const sceneTransition = { type: 'tween' as const, ease: [0.22, 1, 0.36, 1] as [number, number, number, number], duration: 0.4 };
   
   // Derived state
   const vercelReady = Boolean(vercelToken.trim() && project?.id);
