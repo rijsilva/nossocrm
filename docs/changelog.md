@@ -591,3 +591,18 @@
 2. Projeto existe (PAUSED) + Sem slot → [Deletar / Outro nome] + lista de ativos para pausar
 3. Projeto existe (ACTIVE) + Tem slot → [Pausar / Deletar / Outro nome]
 4. Projeto existe (ACTIVE) + Sem slot → [Pausar / Deletar / Outro nome] + lista de ativos para pausar
+
+### 28/12/2025 — Correções no Modal de Conflito de Projetos
+
+- **Bug Fix**: Adicionado campo `confirmRef` obrigatório no payload de `delete-project`
+  - O endpoint exige `confirmRef` igual ao `projectRef` como confirmação de segurança
+  - Antes: payload incompleto causava erro `Invalid payload`
+  - Agora: envia `confirmRef: conflictingProject.ref` corretamente
+- **Bug Fix**: Corrigida detecção de status `ACTIVE` vs. `INACTIVE`
+  - Antes: `status.includes('ACTIVE')` detectava `INACTIVE` como ativo (substring match)
+  - Agora: `status === 'ACTIVE_HEALTHY' || status === 'ACTIVE'` (exact match)
+  - Resultado: botão "Pausar" só aparece para projetos realmente ativos
+- **UX**: Melhorado diálogo de confirmação de deleção
+  - Antes: `window.alert` simples
+  - Agora: `window.confirm` com mensagem detalhada sobre irreversibilidade
+  - Texto: "⚠️ ATENÇÃO: Você está prestes a DELETAR permanentemente... Esta ação NÃO pode ser desfeita..."

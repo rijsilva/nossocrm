@@ -1025,7 +1025,7 @@ export default function InstallWizardPage() {
                     <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-6 space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-slate-400">Status:</span>
-                        <span className={conflictingProject.status?.toUpperCase().includes('ACTIVE') ? 'text-emerald-400' : 'text-amber-400'}>
+                        <span className={(conflictingProject.status?.toUpperCase() === 'ACTIVE_HEALTHY' || conflictingProject.status?.toUpperCase() === 'ACTIVE') ? 'text-emerald-400' : 'text-amber-400'}>
                           {conflictingProject.status || 'DESCONHECIDO'}
                         </span>
                       </div>
@@ -1038,7 +1038,7 @@ export default function InstallWizardPage() {
                     </div>
                     
                     <div className="space-y-3">
-                      {conflictingProject.status?.toUpperCase().includes('ACTIVE') && (
+                      {(conflictingProject.status?.toUpperCase() === 'ACTIVE_HEALTHY' || conflictingProject.status?.toUpperCase() === 'ACTIVE') && (
                         <button
                           onClick={async () => {
                             setSupabasePausingRef(conflictingProject.ref);
@@ -1059,7 +1059,17 @@ export default function InstallWizardPage() {
                       
                       <button
                         onClick={async () => {
-                          if (!confirm(`Tem certeza que deseja DELETAR o projeto "${conflictingProject.name}"? Esta ação não pode ser desfeita.`)) return;
+                          setSupabaseCreateError(null);
+                          const userConfirmed = window.confirm(
+                            `⚠️ ATENÇÃO: Você está prestes a DELETAR permanentemente o projeto "${conflictingProject.name}".
+
+` +
+                            `Esta ação NÃO pode ser desfeita e todos os dados serão perdidos.
+
+` +
+                            `Deseja continuar?`
+                          );
+                          if (!userConfirmed) return;
                           
                           try {
                             const res = await fetch('/api/installer/supabase/delete-project', {
@@ -1069,10 +1079,12 @@ export default function InstallWizardPage() {
                                 installerToken: installerToken.trim() || undefined,
                                 accessToken: supabaseAccessToken.trim(),
                                 projectRef: conflictingProject.ref,
+                                confirmRef: conflictingProject.ref,
                               }),
                             });
                             
-                            if (!res.ok) throw new Error('Falha ao deletar projeto');
+                            const data = await res.json();
+                            if (!res.ok) throw new Error(data?.error || 'Falha ao deletar projeto');
                             
                             // Clear conflict and retry creation
                             setConflictingProject(null);
